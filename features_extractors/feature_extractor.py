@@ -31,7 +31,7 @@ from bs4 import BeautifulSoup
 
 key = 'Add your OPR API key here'
 
-import signal
+# import signal
 
 class TimedOutExc(Exception):
     pass
@@ -43,10 +43,9 @@ def deadline(timeout, *args):
 
         def new_f(*args):
             # signal.signal(signal.SIGALRM, handler)
-            signal.signal(signal., handler)
-            signal.alarm(timeout)
+            # signal.alarm(timeout)
             return f(*args)
-            signal.alarm(0)
+            # signal.alarm(0)
 
         new_f.__name__ = f.__name__
         return new_f
@@ -227,17 +226,18 @@ def extract_data_from_URL(hostname, content, domain, Href, Link, Anchor, Media, 
             
     # collect all css
     for link in soup.find_all('link', rel='stylesheet'):
-        dots = [x.start(0) for x in re.finditer('\.', link['href'])]
-        if hostname in link['href'] or domain in link['href'] or len(dots) == 1 or not link['href'].startswith('http'):
-            if not link['href'].startswith('http'):
-                if not link['href'].startswith('/'):
-                    CSS['internals'].append(hostname+'/'+link['href']) 
-                elif link['href'] in Null_format:
-                    CSS['null'].append(link['href'])  
-                else:
-                    CSS['internals'].append(hostname+link['href'])   
-        else:
-            CSS['externals'].append(link['href'])
+        if link.get('href') != None:
+            dots = [x.start(0) for x in re.finditer('\.', link['href'])]
+            if hostname in link['href'] or domain in link['href'] or len(dots) == 1 or not link['href'].startswith('http'):
+                if not link['href'].startswith('http'):
+                    if not link['href'].startswith('/'):
+                        CSS['internals'].append(hostname+'/'+link['href']) 
+                    elif link['href'] in Null_format:
+                        CSS['null'].append(link['href'])  
+                    else:
+                        CSS['internals'].append(hostname+link['href'])   
+            else:
+                CSS['externals'].append(link['href'])
     
     for style in soup.find_all('style', type='text/css'):
         try: 
